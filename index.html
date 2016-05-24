@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="stylesheet.css">
+    <title>Evolution Simulation</title>
+</head>
+
+<body>
+
+    <h1>Evolution Simulation</h1>
+
+    <div>
+        <button id="run">Run</button>
+        <button id="stop">Stop</button>
+        <span>Step Delay: </span>
+        <input type="number" value="100" id="delay"/>
+        <input type="checkbox" checked=true id="foodBox">Generate Food</input>
+        <span id="state">Not Running</span>
+    </div>
+
+    <table id="sim">
+    </table>
+    
+    <div>
+        <table id="ind" class="list">
+        </table>
+    
+        <table id="food" class="list">
+        </table>
+    </div>
+    
+    <script type="text/javascript" src="jquery-1.12.3.min.js"></script>
+    <script src="index.js"></script>
+    <script src="individuals.js"></script>
+    <script src="food.js"></script>
+
+</body>
+
+</html>
