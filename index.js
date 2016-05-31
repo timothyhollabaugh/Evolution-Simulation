@@ -30,8 +30,10 @@ var speedBase = 4;
 var startFood = 5;
 var startInd = 5;
 
-$(document).ready(function() {
+var csv = document.getElementById("csv");
 
+$(document).ready(function() {
+    csv.value = "Step,Individuals,Average Speed,Foods\n";
     for (var i = 0; i < WIDTH; i++) {
         var row = table.insertRow(-1);
         for (var j = 0; j < HEIGHT; j++) {
@@ -320,4 +322,7 @@ function updateSim() {
     updateIndsTable();
     updateFoodTable();
     drawSim();
+    
+    csv.value += runTime + "," + individuals.length + "," + (sumSpeed / individuals.length) + "," + food.length + "\n";
+    
 }
