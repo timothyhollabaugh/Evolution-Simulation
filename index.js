@@ -141,6 +141,11 @@ function drawSim() {
             table.rows[j].cells[i].style.backgroundColor = "white";
         }
     }
+    
+    for (var i = 0; i < food.length; i++) {
+        table.rows[food[i]["Y Pos"]].cells[food[i]["X Pos"]].innerHTML = "Food " + food[i]["Food"];
+        table.rows[food[i]["Y Pos"]].cells[food[i]["X Pos"]].style.backgroundColor = "green";
+    }
 
     for (var i = 0; i < individuals.length; i++) {
         var individual = individuals[i];
@@ -160,10 +165,6 @@ function drawSim() {
         table.rows[ypos].cells[xpos].innerHTML = "Ind " + individual["Individual"];
     }
 
-    for (var i = 0; i < food.length; i++) {
-        table.rows[food[i]["Y Pos"]].cells[food[i]["X Pos"]].innerHTML = "Food " + food[i]["Food"];
-        table.rows[food[i]["Y Pos"]].cells[food[i]["X Pos"]].style.backgroundColor = "green";
-    }
 }
 
 
@@ -171,9 +172,9 @@ function updateSim() {
 
     //var f0x = food[0]["X Pos"];
     //var f0y = food[0]["Y Pos"]
-    
+
     var sumSpeed = 0;
-    
+
     for (var i = 0; i < individuals.length; i++) {
         var individual = individuals[i];
         sumSpeed += individual["Speed"];
@@ -229,8 +230,8 @@ function updateSim() {
 
             var dx2 = minx - xpos;
             var dy2 = miny - ypos;
-            
-            
+
+
             if (dx2 === 0 && dy2 === 0) {
 
                 //individual["Energy"] += foodValue;
@@ -278,9 +279,9 @@ function updateSim() {
             }
         }
     }
-    
-    $("#avgSpeed").text("Average Speed: " + (sumSpeed/individuals.length));
-    
+
+    $("#avgSpeed").text("Average Speed: " + (sumSpeed / individuals.length));
+
     if ($("#foodBox").prop("checked")) {
         for (var i = 0; i < foodNum; i++) {
             var tmpFood = {};
