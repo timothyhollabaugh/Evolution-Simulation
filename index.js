@@ -5,8 +5,8 @@
 /* global foodId */
 /* global indId */
 
-var WIDTH = 10;
-var HEIGHT = 10;
+var WIDTH = 15;
+var HEIGHT = 15;
 
 var table = document.getElementById("sim");
 
@@ -19,10 +19,16 @@ var runTime = 0;
 
 var foodNum = 1;
 
-var foodValue = 3;
-var moveFood = 1;
+var foodValue = 2;
 
-var indMax = 20;
+var indMax = 40;
+
+var maxSpeed = 10;
+var speedAdv = 5.2;
+var speedBase = 4;
+
+var startFood = 5;
+var startInd = 5;
 
 $(document).ready(function() {
 
@@ -33,16 +39,79 @@ $(document).ready(function() {
         }
     }
 
+
     individuals[0]["Individual"] = 0;
-    individuals[0]["X Pos"] = 1;
-    individuals[0]["Y Pos"] = 2;
-    individuals[0]["Energy"] = 10;
+    individuals[0]["X Pos"] = WIDTH - 2;
+    individuals[0]["Y Pos"] = HEIGHT - 2;
+    individuals[0]["Energy"] = indMax;
+    individuals[0]["Speed"] = Math.floor(maxSpeed - 1);
+
+    for (var f = 1; f < startInd; f++) {
+        var tmpInd = {};
+
+        var x = Math.round(Math.random() * (WIDTH - 1));
+        var y = Math.round(Math.random() * (HEIGHT - 1));
+
+        var found = false;
+
+        for (var i = 0; i < food.length; i++) {
+            if (food[i]["X Pos"] === x && food[i]["Y Pos"] === y) {
+                found = true;
+            }
+        }
+
+        for (var i = 0; i < individuals.length; i++) {
+            if (individuals[i]["X Pos"] === x && individuals[i]["Y Pos"] === y) {
+                found = true;
+            }
+        }
+
+        if (!found) {
+            tmpInd["Individual"] = ++indId;
+            tmpInd["X Pos"] = x;
+            tmpInd["Y Pos"] = y;
+            tmpInd["Energy"] = indMax;
+            tmpInd["Speed"] = Math.round(Math.random() * (maxSpeed - 1));
+
+            individuals[individuals.length] = tmpInd;
+        }
+    }
+
 
     updateIndsTable();
 
     food[0]["Food"] = 0;
-    food[0]["X Pos"] = 3;
-    food[0]["Y Pos"] = 4;
+    food[0]["X Pos"] = 2;
+    food[0]["Y Pos"] = 2;
+
+    for (var f = 1; f < startFood; f++) {
+        var tmpFood = {};
+
+        var x = Math.round(Math.random() * (WIDTH - 1));
+        var y = Math.round(Math.random() * (HEIGHT - 1));
+
+        var found = false;
+
+        for (var i = 0; i < food.length; i++) {
+            if (food[i]["X Pos"] === x && food[i]["Y Pos"] === y) {
+                found = true;
+            }
+        }
+
+        for (var i = 0; i < individuals.length; i++) {
+            if (individuals[i]["X Pos"] === x && individuals[i]["Y Pos"] === y) {
+                found = true;
+            }
+        }
+
+        if (!found) {
+            tmpFood["Food"] = ++foodId;
+            tmpFood["X Pos"] = x;
+            tmpFood["Y Pos"] = y;
+
+            food[food.length] = tmpFood;
+        }
+    }
 
     updateFoodTable();
 
@@ -62,9 +131,9 @@ $("#stop").click(function() {
 
 function drawSim() {
 
-    runTime += runDelay / 1000;
+    runTime++;
 
-    $("#state").text("Running for " + runTime.toFixed(1) + " seconds");
+    $("#state").text("Running for " + runTime + " steps");
 
     for (var i = 0; i < WIDTH; i++) {
         for (var j = 0; j < HEIGHT; j++) {
@@ -74,17 +143,21 @@ function drawSim() {
     }
 
     for (var i = 0; i < individuals.length; i++) {
+        var individual = individuals[i];
 
-        var color = (individuals[i]["Energy"] / indMax);
+        var xpos = individual["X Pos"];
+        var ypos = individual["Y Pos"];
 
-        table.rows[individuals[i]["Y Pos"]].cells[individuals[i]["X Pos"]].style.backgroundColor = "rgba(" +
-            255 + "," +
+        var color = (individual["Energy"] / indMax);
+
+        table.rows[ypos].cells[xpos].style.backgroundColor = "rgba(" +
             0 + "," +
-            0 + "," + 
-            color + 
-        ")";
-        
-        table.rows[individuals[i]["Y Pos"]].cells[individuals[i]["X Pos"]].innerHTML = "Ind " + individuals[i]["Individual"];
+            0 + "," +
+            255 + "," +
+            color +
+            ")";
+
+        table.rows[ypos].cells[xpos].innerHTML = "Ind " + individual["Individual"];
     }
 
     for (var i = 0; i < food.length; i++) {
@@ -95,20 +168,32 @@ function drawSim() {
 
 
 function updateSim() {
+
+    //var f0x = food[0]["X Pos"];
+    //var f0y = food[0]["Y Pos"]
+    
+    var sumSpeed = 0;
+    
     for (var i = 0; i < individuals.length; i++) {
-        if (food.length > 0) {
+        var individual = individuals[i];
+        sumSpeed += individual["Speed"];
+        if (runTime % (maxSpeed - individuals[i]["Speed"]) === 0 && food.length > 0) {
+
+            var xpos = individual["X Pos"];
+            var ypos = individual["Y Pos"];
+
             var minx = food[0]["X Pos"];
             var miny = food[0]["Y Pos"];
             var mind = Math.sqrt(
-                (individuals[i]["X Pos"] - food[0]["X Pos"]) * (individuals[i]["X Pos"] - food[0]["X Pos"]) +
-                (individuals[i]["Y Pos"] - food[0]["Y Pos"]) * (individuals[i]["Y Pos"] - food[0]["Y Pos"])
+                (xpos - food[0]["X Pos"]) * (xpos - food[0]["X Pos"]) +
+                (ypos - food[0]["Y Pos"]) * (ypos - food[0]["Y Pos"])
             );
             var minf = food[0];
 
             for (var j = 1; j < food.length; j++) {
 
-                var ix = individuals[i]["X Pos"];
-                var iy = individuals[i]["Y Pos"];
+                var ix = xpos;
+                var iy = ypos;
 
                 var fx = food[j]["X Pos"];
                 var fy = food[j]["Y Pos"];
@@ -127,66 +212,75 @@ function updateSim() {
 
             }
 
-            var dx = minx - individuals[i]["X Pos"];
-            var dy = miny - individuals[i]["Y Pos"];
-
+            var dx = minx - xpos;
+            var dy = miny - ypos;
 
             if (Math.abs(dx) > Math.abs(dy)) {
-                individuals[i]["X Pos"] += Math.sign(dx);
+                xpos += Math.sign(dx);
             }
             else {
-                individuals[i]["Y Pos"] += Math.sign(dy);
+                ypos += Math.sign(dy);
             }
 
-            individuals[i]["Energy"] -= moveFood;
+            individual["X Pos"] = xpos;
+            individual["Y Pos"] = ypos;
 
-            var dx2 = minx - individuals[i]["X Pos"];
-            var dy2 = miny - individuals[i]["Y Pos"];
+            individual["Energy"] -= Math.floor(speedBase + individual["Speed"] / speedAdv);
 
+            var dx2 = minx - xpos;
+            var dy2 = miny - ypos;
+            
+            
             if (dx2 === 0 && dy2 === 0) {
 
-                individuals[i]["Energy"] += foodValue;
+                //individual["Energy"] += foodValue;
+                individual["Energy"] += individual["Speed"] * foodValue;
 
                 food.splice(minf, 1);
 
 
-                if (individuals[i]["Energy"] >= indMax) {
-                    for (var f = 0; f < individuals.length; f++) {
-                        if (individuals[f]["Individual"] === individuals[i]["Individual"]) {
-                            individuals.splice(f, 1);
-                        }
-                    }
+                if (individual["Energy"] >= indMax) {
 
                     var tmp1 = {};
 
                     tmp1["Individual"] = ++indId;
                     tmp1["X Pos"] = minx;
                     tmp1["Y Pos"] = miny;
-                    tmp1["Energy"] = 10;
+                    tmp1["Energy"] = maxSpeed * 2;
+                    tmp1["Speed"] = individual["Speed"] + (individual["Speed"] < (maxSpeed - 1) ? 1 : 0);
 
-                    individuals[individuals.length] = jQuery.extend(true, {}, tmp1);
 
                     var tmp2 = {};
 
                     tmp2["Individual"] = ++indId;
                     tmp2["X Pos"] = (minx === WIDTH - 1 ? minx - 1 : minx + 1);
                     tmp2["Y Pos"] = miny;
-                    tmp2["Energy"] = 10;
+                    tmp2["Energy"] = maxSpeed * 2;
+                    tmp2["Speed"] = individual["Speed"] - (individual["Speed"] > 1 ? 1 : 0);
 
+                    for (var f = 0; f < individuals.length; f++) {
+                        if (individuals[f]["Individual"] === individual["Individual"]) {
+                            individuals.splice(f, 1);
+                        }
+                    }
+
+                    individuals[individuals.length] = jQuery.extend(true, {}, tmp1);
                     individuals[individuals.length] = jQuery.extend(true, {}, tmp2);
                 }
             }
 
-            if (individuals[i]["Energy"] <= 0) {
+            if (individual["Energy"] <= 0) {
                 for (var f = 0; f < individuals.length; f++) {
-                    if (individuals[f]["Individual"] === individuals[i]["Individual"]) {
+                    if (individuals[f]["Individual"] === individual["Individual"]) {
                         individuals.splice(f, 1);
                     }
                 }
             }
         }
     }
-
+    
+    $("#avgSpeed").text("Average Speed: " + (sumSpeed/individuals.length));
+    
     if ($("#foodBox").prop("checked")) {
         for (var i = 0; i < foodNum; i++) {
             var tmpFood = {};
@@ -196,14 +290,19 @@ function updateSim() {
 
             var found = false;
 
-            for (var i = 0; i < food.length; i++) {
+            for (var i = 0, len = food.len; i < len; i++) {
                 if (food[i]["X Pos"] === x && food[i]["Y Pos"] === y) {
                     found = true;
                 }
             }
 
-            for (var i = 0; i < individuals.length; i++) {
-                if (individuals[i]["X Pos"] === x && individuals[i]["Y Pos"] === y) {
+            for (var i = 0, len = individuals.len; i < len; i++) {
+                var individual = individuals[i];
+
+                var xpos = individual["X Pos"];
+                var ypos = individual["Y Pos"];
+
+                if (xpos === x && ypos === y) {
                     found = true;
                 }
             }

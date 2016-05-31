@@ -10,8 +10,7 @@ function updateIndsTable() {
 
 
     if (individuals.length > 0) {
-
-
+        
         var l = indTable.rows.length;
 
         for (var i = 0; i < l; i++) {
@@ -31,8 +30,6 @@ function updateIndsTable() {
 
             }
         }
-
-
 
         var footer = indTable.createTFoot();
         var frow = footer.insertRow(-1);
@@ -135,10 +132,11 @@ function updateIndividual() {
         }
     }
 
-     if (!update) {
+    if (!update) {
         tmpInd["Individual"] = ++indId;
         individuals[individuals.length] = jQuery.extend(true, {}, tmpInd);
-    }else{
+    }
+    else {
         for (var f = 0; f < individuals.length; f++) {
             if (individuals[f]["Individual"] === tmpInd["Food"]) {
                 individuals[f] = jQuery.extend(true, {}, tmpInd);

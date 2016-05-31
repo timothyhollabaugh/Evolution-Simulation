@@ -7,11 +7,7 @@ var foodId = 0;
 
 function updateFoodTable() {
 
-
-
     if (food.length > 0) {
-
-
 
         var l = foodTable.rows.length;
 
@@ -28,8 +24,6 @@ function updateFoodTable() {
             if (food[0].hasOwnProperty(key)) {
                 var cell = hrow.insertCell(-1);
                 cell.innerHTML = "<b>" + key + "</b>";
-
-
             }
         }
 
@@ -137,14 +131,15 @@ function updateFood() {
     if (!update) {
         tmpfood["Food"] = ++foodId;
         food[food.length] = jQuery.extend(true, {}, tmpfood);
-    }else{
+    }
+    else {
         for (var f = 0; f < food.length; f++) {
             if (food[f]["Food"] === tmpfood["Food"]) {
                 food[f] = jQuery.extend(true, {}, tmpfood);
             }
         }
     }
-    
+
     updateFoodTable();
     drawSim();
 }
