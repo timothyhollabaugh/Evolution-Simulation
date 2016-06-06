@@ -17,15 +17,26 @@
         <input type="number" value="100" id="delay" />
         <span id="state">Not Running</span>
     </div>
-
+    
     <table id="sim">
     </table>
-    
+
     <table id="stats">
-        <tr><td>Individuals:</td><td id="numInds">0</td></tr>
-        <tr><td>Average Speed:</td><td id="avgSpeed">0</td></tr>
-        <tr><td>Foods:</td><td id="numFoods">0</td></tr>
+        <th colspan="2">Stats</th>
+        <tr>
+            <td id="label">Individuals:</td>
+            <td id="numInds">0</td>
+        </tr>
+        <tr>
+            <td id="label">Average Speed:</td>
+            <td id="avgSpeed">0.00</td>
+        </tr>
+        <tr>
+            <td id="label">Foods:</td>
+            <td id="numFoods">0</td>
+        </tr>
     </table>
+    
     <!--
     <table id="ind" class="list">
     </table>
@@ -33,6 +44,7 @@
     <table id="food" class="list">
     </table>
     -->
+    
     <textarea id="csv" cols="40" rows="10" readonly="true"></textarea>
 
     <script type="text/javascript" src="jquery-1.12.3.min.js"></script>

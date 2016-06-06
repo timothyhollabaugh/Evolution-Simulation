@@ -1,10 +1,16 @@
-table, th, td {
-   border: 1px solid black;
+table,
+th,
+td {
+    border: 1px solid black;
 }
 
 table {
     border-collapse: collapse;
-    display: inline-table;
+    padding: 5px;
+}
+
+#sim {
+    float: left;
 }
 
 #sim td {
@@ -12,7 +18,8 @@ table {
     height: 45px;
 }
 
-.list td, th{
+.list td,
+th {
     width: 70px;
     text-align: center;
 }
@@ -28,4 +35,25 @@ table input {
 
 textarea {
     display: block;
+}
+
+#stats {
+    display: inline-table;
+}
+
+#stats td,
+th {
+    padding: 5px;
+}
+
+#label {
+    border-right-style: none;
+}
+
+#numInds,
+#numFoods,
+#avgSpeed {
+    width: 50px;
+    text-align: right;
+    border-left-style: none;
 }
