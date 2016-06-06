@@ -290,7 +290,9 @@ function updateSim() {
         sumSpeed += individuals[i]["Speed"];
     }
 
-    $("#avgSpeed").text("Average Speed: " + (sumSpeed / individuals.length));
+    $("#numInds").text(individuals.length);
+    $("#avgSpeed").text((sumSpeed / individuals.length).toFixed(2));
+    $("#numFoods").text(food.length);
 
     for (var i = 0; i < foodNum; i++) {
         var tmpFood = {};
