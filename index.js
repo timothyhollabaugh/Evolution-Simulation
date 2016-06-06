@@ -80,7 +80,7 @@ $(document).ready(function() {
     }
 
 
-    updateIndsTable();
+    //updateIndsTable();
 
     food[0]["Food"] = 0;
     food[0]["X Pos"] = 2;
@@ -115,7 +115,7 @@ $(document).ready(function() {
         }
     }
 
-    updateFoodTable();
+    //updateFoodTable();
 
     drawSim();
 
@@ -285,52 +285,52 @@ function updateSim() {
             }
         }
     }
-    
-    for(var i = 0; i < individuals.length; i++){
+
+    for (var i = 0; i < individuals.length; i++) {
         sumSpeed += individuals[i]["Speed"];
     }
 
     $("#avgSpeed").text("Average Speed: " + (sumSpeed / individuals.length));
 
-    if ($("#foodBox").prop("checked")) {
-        for (var i = 0; i < foodNum; i++) {
-            var tmpFood = {};
+    for (var i = 0; i < foodNum; i++) {
+        var tmpFood = {};
 
-            var x = Math.round(Math.random() * (WIDTH - 1));
-            var y = Math.round(Math.random() * (HEIGHT - 1));
+        var x = Math.round(Math.random() * (WIDTH - 1));
+        var y = Math.round(Math.random() * (HEIGHT - 1));
 
-            var found = false;
+        var found = false;
 
-            for (var i = 0, len = food.len; i < len; i++) {
-                if (food[i]["X Pos"] === x && food[i]["Y Pos"] === y) {
-                    found = true;
-                }
-            }
-
-            for (var i = 0, len = individuals.len; i < len; i++) {
-                var individual = individuals[i];
-
-                var xpos = individual["X Pos"];
-                var ypos = individual["Y Pos"];
-
-                if (xpos === x && ypos === y) {
-                    found = true;
-                }
-            }
-
-            if (!found) {
-                tmpFood["Food"] = ++foodId;
-                tmpFood["X Pos"] = x;
-                tmpFood["Y Pos"] = y;
-
-                food[food.length] = tmpFood;
+        for (var i = 0, len = food.len; i < len; i++) {
+            if (food[i]["X Pos"] === x && food[i]["Y Pos"] === y) {
+                found = true;
             }
         }
+
+        for (var i = 0, len = individuals.len; i < len; i++) {
+            var individual = individuals[i];
+
+            var xpos = individual["X Pos"];
+            var ypos = individual["Y Pos"];
+
+            if (xpos === x && ypos === y) {
+                found = true;
+            }
+        }
+
+        if (!found) {
+            tmpFood["Food"] = ++foodId;
+            tmpFood["X Pos"] = x;
+            tmpFood["Y Pos"] = y;
+
+            food[food.length] = tmpFood;
+        }
     }
-    updateIndsTable();
-    updateFoodTable();
+
+    //updateIndsTable();
+    //updateFoodTable();
     drawSim();
 
     csv.value += runTime + "," + individuals.length + "," + (sumSpeed / individuals.length) + "," + food.length + "\n";
+    csv.scrollTop = csv.scrollHeight;
 
 }

@@ -25,3 +25,7 @@ table input {
 #delay {
     width: 50px;
 }
+
+textarea {
+    display: block;
+}
