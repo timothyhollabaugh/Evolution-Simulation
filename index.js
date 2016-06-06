@@ -143,7 +143,7 @@ function drawSim() {
             table.rows[j].cells[i].style.backgroundColor = "white";
         }
     }
-    
+
     for (var i = 0; i < food.length; i++) {
         table.rows[food[i]["Y Pos"]].cells[food[i]["X Pos"]].innerHTML = "Food " + food[i]["Food"];
         table.rows[food[i]["Y Pos"]].cells[food[i]["X Pos"]].style.backgroundColor = "green";
@@ -179,7 +179,6 @@ function updateSim() {
 
     for (var i = 0; i < individuals.length; i++) {
         var individual = individuals[i];
-        sumSpeed += individual["Speed"];
         if (runTime % (maxSpeed - individuals[i]["Speed"]) === 0 && food.length > 0) {
 
             var xpos = individual["X Pos"];
@@ -269,17 +268,26 @@ function updateSim() {
 
                     individuals[individuals.length] = jQuery.extend(true, {}, tmp1);
                     individuals[individuals.length] = jQuery.extend(true, {}, tmp2);
+
+                    //sumSpeed += tmp1["Speed"];
+                    //sumSpeed += tmp2["Speed"];
                 }
             }
-
-            if (individual["Energy"] <= 0) {
+            else if (individual["Energy"] <= 0) {
                 for (var f = 0; f < individuals.length; f++) {
                     if (individuals[f]["Individual"] === individual["Individual"]) {
                         individuals.splice(f, 1);
                     }
                 }
             }
+            else {
+                //sumSpeed += individual["Speed"];
+            }
         }
+    }
+    
+    for(var i = 0; i < individuals.length; i++){
+        sumSpeed += individuals[i]["Speed"];
     }
 
     $("#avgSpeed").text("Average Speed: " + (sumSpeed / individuals.length));
@@ -322,7 +330,7 @@ function updateSim() {
     updateIndsTable();
     updateFoodTable();
     drawSim();
-    
+
     csv.value += runTime + "," + individuals.length + "," + (sumSpeed / individuals.length) + "," + food.length + "\n";
-    
+
 }
