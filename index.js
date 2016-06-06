@@ -34,14 +34,26 @@ var csv = document.getElementById("csv");
 
 $(document).ready(function() {
     csv.value = "Step,Individuals,Average Speed,Foods\n";
+    
+    reset();
+});
+
+$("#reset").click(function() {
+    reset();
+});
+
+function reset(){
+    
     for (var i = 0; i < WIDTH; i++) {
         var row = table.insertRow(-1);
         for (var j = 0; j < HEIGHT; j++) {
             row.insertCell(-1);
         }
     }
-
-
+    
+    individuals = Array({});
+    food = Array({});
+    
     individuals[0]["Individual"] = 0;
     individuals[0]["X Pos"] = WIDTH - 2;
     individuals[0]["Y Pos"] = HEIGHT - 2;
@@ -118,8 +130,7 @@ $(document).ready(function() {
     //updateFoodTable();
 
     drawSim();
-
-});
+}
 
 $("#run").click(function() {
     runDelay = $("#delay").val();
