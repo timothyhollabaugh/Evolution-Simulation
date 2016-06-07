@@ -150,13 +150,13 @@ function drawSim() {
 
     for (var i = 0; i < WIDTH; i++) {
         for (var j = 0; j < HEIGHT; j++) {
-            table.rows[j].cells[i].innerHTML = "";
+            //table.rows[j].cells[i].innerHTML = "";
             table.rows[j].cells[i].style.backgroundColor = "white";
         }
     }
 
     for (var i = 0; i < food.length; i++) {
-        table.rows[food[i]["Y Pos"]].cells[food[i]["X Pos"]].innerHTML = "Food " + food[i]["Food"];
+        //table.rows[food[i]["Y Pos"]].cells[food[i]["X Pos"]].innerHTML = "Food " + food[i]["Food"];
         table.rows[food[i]["Y Pos"]].cells[food[i]["X Pos"]].style.backgroundColor = "green";
     }
 
@@ -175,7 +175,7 @@ function drawSim() {
             color +
             ")";
 
-        table.rows[ypos].cells[xpos].innerHTML = "Ind " + individual["Individual"];
+        //table.rows[ypos].cells[xpos].innerHTML = "Ind " + individual["Individual"];
     }
 
 }
