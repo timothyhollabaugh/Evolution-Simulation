@@ -4,9 +4,11 @@
 /* global updateFoodTable */
 /* global foodId */
 /* global indId */
+/* global SmoothieChart */
+/* global TimeSeries */
 
-var WIDTH = 15;
-var HEIGHT = 15;
+var WIDTH = 20;
+var HEIGHT = 10;
 
 var table = document.getElementById("sim");
 
@@ -30,11 +32,21 @@ var speedBase = 4;
 var startFood = 5;
 var startInd = 5;
 
-var csv = document.getElementById("csv");
+var chart;
+var schart;
+
+//var csv = document.getElementById("csv");
+
+var indsline = new TimeSeries();
+var foodsline = new TimeSeries();
+var speedline = new TimeSeries();
+
+runDelay = $("#delay").val();
+runTimer = window.setInterval(updateSim, runDelay);
 
 $(document).ready(function() {
-    csv.value = "Step,Individuals,Average Speed,Foods\n";
-    
+    //csv.value = "Step,Individuals,Average Speed,Foods\n";
+
     reset();
 });
 
@@ -42,18 +54,24 @@ $("#reset").click(function() {
     reset();
 });
 
-function reset(){
-    
-    for (var i = 0; i < WIDTH; i++) {
+function reset() {
+
+    var tlen = table.rows.length;
+
+    for (var i = 0; i < tlen; i++) {
+        table.deleteRow(-1);
+    }
+
+    for (var i = 0; i < HEIGHT; i++) {
         var row = table.insertRow(-1);
-        for (var j = 0; j < HEIGHT; j++) {
+        for (var j = 0; j < WIDTH; j++) {
             row.insertCell(-1);
         }
     }
-    
+
     individuals = Array({});
     food = Array({});
-    
+
     individuals[0]["Individual"] = 0;
     individuals[0]["X Pos"] = WIDTH - 2;
     individuals[0]["Y Pos"] = HEIGHT - 2;
@@ -130,6 +148,66 @@ function reset(){
     //updateFoodTable();
 
     drawSim();
+
+    runDelay = $("#delay").val();
+
+    chart = new SmoothieChart({
+            millisPerPixel: runDelay,
+            interpolation: 'linear',
+            grid: {
+                fillStyle: '#ffffff',
+                strokeStyle: '#d9d9d9',
+                sharpLines: true,
+                millisPerLine: 1000,
+                borderVisible: false,
+                verticalSections:5
+            },
+            labels: {
+                fillStyle: '#000000',
+                fontSize: 13,
+                precision: 0
+            },
+            maxValue: 100,
+            minValue: 0
+        });
+
+    chart.addTimeSeries(indsline, {
+        lineWidth: 2,
+        strokeStyle: '#0000ff'
+    });
+    chart.addTimeSeries(foodsline, {
+        lineWidth: 2,
+        strokeStyle: '#00ff00'
+    });
+
+    chart.streamTo(document.getElementById("chart"), runDelay);
+
+    schart = new SmoothieChart({
+            millisPerPixel: runDelay,
+            interpolation: 'bezier',
+            grid: {
+                fillStyle: '#ffffff',
+                strokeStyle: '#d9d9d9',
+                sharpLines: true,
+                millisPerLine: 1000,
+                borderVisible: false,
+                verticalSections:5
+            },
+            labels: {
+                fillStyle: '#000000',
+                fontSize: 13,
+                precision: 0
+            },
+            maxValue: maxSpeed,
+            minValue: 0
+        });
+
+    schart.addTimeSeries(speedline, {
+        lineWidth: 2,
+        strokeStyle: '#ff0000'
+    });
+
+    schart.streamTo(document.getElementById("schart"), runDelay);
 }
 
 $("#run").click(function() {
@@ -343,7 +421,20 @@ function updateSim() {
     //updateFoodTable();
     drawSim();
 
-    csv.value += runTime + "," + individuals.length + "," + (sumSpeed / individuals.length) + "," + food.length + "\n";
-    csv.scrollTop = csv.scrollHeight;
+    console.log(chart);
+
+    var date = new Date();
+
+    indsline.append(date.getTime(), individuals.length);
+    foodsline.append(date.getTime(), food.length);
+    speedline.append(date.getTime(), (sumSpeed / individuals.length));
+
+
+    //csv.value += runTime + "," + individuals.length + "," + (sumSpeed / individuals.length) + "," + food.length + "\n";
+    //csv.scrollTop = csv.scrollHeight;
+
+    if (individuals.length <= 0) {
+        reset();
+    }
 
 }

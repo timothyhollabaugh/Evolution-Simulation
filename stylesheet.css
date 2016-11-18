@@ -57,3 +57,11 @@ th {
     text-align: right;
     border-left-style: none;
 }
+
+#chart {
+    display: block;
+}
+
+#schart {
+    display: block;
+}
