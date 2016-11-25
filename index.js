@@ -8,15 +8,14 @@
 /* global TimeSeries */
 
 var WIDTH = 20;
-var HEIGHT = 10;
+var HEIGHT = 11;
 
 var table = document.getElementById("sim");
 
 var individuals = Array({});
 var food = Array({});
 
-var runTimer;
-var runDelay = 1000;
+var runDelay = 100;
 var runTime = 0;
 
 var foodNum = 1;
@@ -30,31 +29,76 @@ var speedAdv = 5.2;
 var speedBase = 4;
 
 var startFood = 5;
-var startInd = 5;
+var startInd = 3;
 
-var chart;
-var schart;
+var maxdeadsteps = 50;
+var deadsteps = 0;
 
-//var csv = document.getElementById("csv");
+var chart = new SmoothieChart({
+        millisPerPixel: runDelay,
+        interpolation: 'linear',
+        grid: {
+            fillStyle: '#ffffff',
+            strokeStyle: '#ffffff',
+            //strokeStyle: '#d9d9d9',
+            sharpLines: true,
+            millisPerLine: 1000,
+            borderVisible: false,
+            verticalSections: 5
+        },
+        labels: {
+            fillStyle: '#000000',
+            fontSize: 13,
+            precision: 0
+        },
+        maxValue: 100,
+        minValue: 0,
+        yMinFormatter: function(min, precision) {
+            return "";
+        },
+        yMaxFormatter: function(min, precision) {
+            return "";
+        }
+    });
+    
+var chartcanvas = document.getElementById("chart");
+
 
 var indsline = new TimeSeries();
 var foodsline = new TimeSeries();
 var speedline = new TimeSeries();
 
-runDelay = $("#delay").val();
-runTimer = window.setInterval(updateSim, runDelay);
+
+
 
 $(document).ready(function() {
-    //csv.value = "Step,Individuals,Average Speed,Foods\n";
-
+    
     reset();
-});
-
-$("#reset").click(function() {
-    reset();
+    
+    chart.addTimeSeries(indsline, {
+        lineWidth: 2,
+        strokeStyle: '#0000ff'
+    });
+    chart.addTimeSeries(foodsline, {
+        lineWidth: 2,
+        strokeStyle: 'green'
+    });
+    chart.addTimeSeries(speedline, {
+        lineWidth: 2,
+        strokeStyle: '#ff0000'
+    });
+    chart.streamTo(chartcanvas, runDelay);
+    
+    window.setInterval(updateSim, runDelay);
 });
 
 function reset() {
+    
+    //alert("reseting")
+    
+    deadsteps = 0;
+    
+    table.width = window.innerWidth - 30;
 
     var tlen = table.rows.length;
 
@@ -65,7 +109,9 @@ function reset() {
     for (var i = 0; i < HEIGHT; i++) {
         var row = table.insertRow(-1);
         for (var j = 0; j < WIDTH; j++) {
-            row.insertCell(-1);
+            var cell = row.insertCell(-1);
+            
+            cell.style.height = (table.width/WIDTH) + "px";
         }
     }
 
@@ -145,80 +191,15 @@ function reset() {
         }
     }
 
-    //updateFoodTable();
-
     drawSim();
+    
+    indsline.clear();
+    foodsline.clear();
+    speedline.clear();
+    
+    chartcanvas.width = table.width;
 
-    runDelay = $("#delay").val();
-
-    chart = new SmoothieChart({
-            millisPerPixel: runDelay,
-            interpolation: 'linear',
-            grid: {
-                fillStyle: '#ffffff',
-                strokeStyle: '#d9d9d9',
-                sharpLines: true,
-                millisPerLine: 1000,
-                borderVisible: false,
-                verticalSections:5
-            },
-            labels: {
-                fillStyle: '#000000',
-                fontSize: 13,
-                precision: 0
-            },
-            maxValue: 100,
-            minValue: 0
-        });
-
-    chart.addTimeSeries(indsline, {
-        lineWidth: 2,
-        strokeStyle: '#0000ff'
-    });
-    chart.addTimeSeries(foodsline, {
-        lineWidth: 2,
-        strokeStyle: '#00ff00'
-    });
-
-    chart.streamTo(document.getElementById("chart"), runDelay);
-
-    schart = new SmoothieChart({
-            millisPerPixel: runDelay,
-            interpolation: 'bezier',
-            grid: {
-                fillStyle: '#ffffff',
-                strokeStyle: '#d9d9d9',
-                sharpLines: true,
-                millisPerLine: 1000,
-                borderVisible: false,
-                verticalSections:5
-            },
-            labels: {
-                fillStyle: '#000000',
-                fontSize: 13,
-                precision: 0
-            },
-            maxValue: maxSpeed,
-            minValue: 0
-        });
-
-    schart.addTimeSeries(speedline, {
-        lineWidth: 2,
-        strokeStyle: '#ff0000'
-    });
-
-    schart.streamTo(document.getElementById("schart"), runDelay);
 }
-
-$("#run").click(function() {
-    runDelay = $("#delay").val();
-    runTimer = window.setInterval(updateSim, runDelay);
-});
-
-$("#stop").click(function() {
-    window.clearInterval(runTimer);
-    $("#state").text("Not Running");
-});
 
 function drawSim() {
 
@@ -257,7 +238,6 @@ function drawSim() {
     }
 
 }
-
 
 function updateSim() {
 
@@ -416,25 +396,20 @@ function updateSim() {
             food[food.length] = tmpFood;
         }
     }
-
-    //updateIndsTable();
-    //updateFoodTable();
     drawSim();
-
-    console.log(chart);
 
     var date = new Date();
 
     indsline.append(date.getTime(), individuals.length);
     foodsline.append(date.getTime(), food.length);
-    speedline.append(date.getTime(), (sumSpeed / individuals.length));
-
-
-    //csv.value += runTime + "," + individuals.length + "," + (sumSpeed / individuals.length) + "," + food.length + "\n";
-    //csv.scrollTop = csv.scrollHeight;
+    speedline.append(date.getTime(), (sumSpeed / individuals.length)*10);
 
     if (individuals.length <= 0) {
-        reset();
+        if(deadsteps <= maxdeadsteps){
+            deadsteps++;
+        }else{
+            reset();
+        }
     }
 
 }
